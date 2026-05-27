@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 
 // Load environment variables
@@ -105,8 +104,12 @@ async function startServer() {
     }
   });
 
+  // Serve the gallery-project folder statically for production & development so it's accessible across all devices
+  app.use("/gallery-project", express.static(path.join(process.cwd(), "gallery-project")));
+
   // Integrasi Vite middleware untuk development, atau file statis untuk production
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
