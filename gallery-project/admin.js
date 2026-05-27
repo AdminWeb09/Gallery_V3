@@ -18,9 +18,31 @@ const DEMO_ADMIN = {
 };
 
 // Inisialisasi Klien Supabase
-function initSupabase() {
-  const savedUrl = localStorage.getItem("supabase_url");
-  const savedKey = localStorage.getItem("supabase_anon_key");
+async function initSupabase() {
+  let savedUrl = localStorage.getItem("supabase_url");
+  let savedKey = localStorage.getItem("supabase_anon_key");
+
+  try {
+    const res = await fetch("/api/supabase-config");
+    if (res.ok) {
+      const data = await res.json();
+      if (data.url && data.anonKey) {
+        savedUrl = data.url;
+        savedKey = data.anonKey;
+        localStorage.setItem("supabase_url", data.url);
+        localStorage.setItem("supabase_anon_key", data.anonKey);
+      } else if (savedUrl && savedKey) {
+        // Jika server kosong tapi lokal punya, sync ke server
+        await fetch("/api/supabase-config", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: savedUrl, anonKey: savedKey })
+        });
+      }
+    }
+  } catch (err) {
+    console.warn("Gagal mematangkan konfigurasi dari server backend:", err);
+  }
 
   const url = savedUrl || SUPABASE_URL;
   const key = savedKey || SUPABASE_ANON_KEY;
@@ -647,8 +669,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(toastCont);
   }
 
-  initSupabase();
-  checkAuthSession();
+  initSupabase().then(() => {
+    checkAuthSession();
+  });
 
   // Bind Form Auth
   if (loginForm) {

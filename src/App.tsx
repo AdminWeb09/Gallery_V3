@@ -130,6 +130,22 @@ export default function App() {
             localStorage.setItem("supabase_anon_key_react", data.anonKey);
             localStorage.setItem("supabase_url", data.url);
             localStorage.setItem("supabase_anon_key", data.anonKey);
+          } else {
+            // Jika server kosong, cek apakah device ini sudah punya local config sebelumnya
+            const localUrl = localStorage.getItem("supabase_url_react") || localStorage.getItem("supabase_url");
+            const localKey = localStorage.getItem("supabase_anon_key_react") || localStorage.getItem("supabase_anon_key");
+            
+            if (localUrl && localKey) {
+              console.log("Menyinkronkan konfigurasi lokal ke server...");
+              await fetch("/api/supabase-config", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ url: localUrl, anonKey: localKey })
+              });
+              setSbConfig({ url: localUrl, anonKey: localKey });
+            }
           }
         }
       } catch (err) {
