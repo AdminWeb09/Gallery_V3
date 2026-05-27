@@ -11,10 +11,13 @@ const CONFIG_FILE = path.join(process.cwd(), "supabase-config.json");
 // Helper to read config
 function readConfig() {
   // First priority: Env variables
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+  const envUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  const envKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
+  
+  if (envUrl && envKey) {
     return {
-      url: process.env.SUPABASE_URL,
-      anonKey: process.env.SUPABASE_ANON_KEY,
+      url: envUrl,
+      anonKey: envKey,
       source: "env"
     };
   }

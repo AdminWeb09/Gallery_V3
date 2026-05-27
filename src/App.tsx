@@ -109,8 +109,10 @@ export default function App() {
   
   // Supabase Credentials
   const [sbConfig, setSbConfig] = useState<SupabaseConfig>(() => {
-    const savedUrl = localStorage.getItem("supabase_url_react") || "";
-    const savedKey = localStorage.getItem("supabase_anon_key_react") || "";
+    const envUrl = (import.meta as any).env?.VITE_SUPABASE_URL || "";
+    const envKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || "";
+    const savedUrl = localStorage.getItem("supabase_url_react") || envUrl;
+    const savedKey = localStorage.getItem("supabase_anon_key_react") || envKey;
     return { url: savedUrl, anonKey: savedKey };
   });
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
