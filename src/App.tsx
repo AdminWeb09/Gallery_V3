@@ -115,6 +115,29 @@ export default function App() {
   });
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [isDemo, setIsDemo] = useState<boolean>(true);
+
+  // Load configuration from server on mount (for persistent connection across devices)
+  useEffect(() => {
+    const loadConfigFromServer = async () => {
+      try {
+        const res = await fetch("/api/supabase-config");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url && data.anonKey) {
+            setSbConfig({ url: data.url, anonKey: data.anonKey });
+            // Save to localStorage too for fallback / backup consistency
+            localStorage.setItem("supabase_url_react", data.url);
+            localStorage.setItem("supabase_anon_key_react", data.anonKey);
+            localStorage.setItem("supabase_url", data.url);
+            localStorage.setItem("supabase_anon_key", data.anonKey);
+          }
+        }
+      } catch (err) {
+        console.error("Gagal memuat konfigurasi Supabase dari server:", err);
+      }
+    };
+    loadConfigFromServer();
+  }, []);
   
   // Modals / Overlays
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
@@ -235,7 +258,7 @@ export default function App() {
   }, [supabase, isDemo]);
 
   // Handle configuration submit
-  const handleConfigSubmit = (e: React.FormEvent) => {
+  const handleConfigSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const urlInput = (e.target as any).url.value.trim();
     const keyInput = (e.target as any).key.value.trim();
@@ -245,6 +268,7 @@ export default function App() {
       return;
     }
 
+    // Simpan secara lokal
     localStorage.setItem("supabase_url_react", urlInput);
     localStorage.setItem("supabase_anon_key_react", keyInput);
     
@@ -252,20 +276,47 @@ export default function App() {
     localStorage.setItem("supabase_url", urlInput);
     localStorage.setItem("supabase_anon_key", keyInput);
 
+    // Simpan ke server untuk sinkronisasi semua perangkat
+    try {
+      const res = await fetch("/api/supabase-config", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url: urlInput, anonKey: keyInput })
+      });
+      if (res.ok) {
+        addToast("Konfigurasi disimpan di server! Sekarang tersambung secara permanen pada semua perangkat.", "success");
+      } else {
+        addToast("Konfigurasi disimpan di lokal, gagal mengirim ke server.", "info");
+      }
+    } catch (err) {
+      console.error("Gagal mengirim konfigurasi ke server:", err);
+      addToast("Konfigurasi disimpan lokal. Gagal menghubungi server backend.", "info");
+    }
+
     setSbConfig({ url: urlInput, anonKey: keyInput });
     setShowConfigModal(false);
-    addToast("Konfigurasi Supabase berhasil diperbarui! Mencoba menghubungkan database...", "success");
   };
 
-  const clearConfig = () => {
+  const clearConfig = async () => {
     localStorage.removeItem("supabase_url_react");
     localStorage.removeItem("supabase_anon_key_react");
     localStorage.removeItem("supabase_url");
     localStorage.removeItem("supabase_anon_key");
+    
+    // Hapus di server
+    try {
+      await fetch("/api/supabase-config", { method: "DELETE" });
+      addToast("Konfigurasi dihapus dari lokal dan server. Kembali ke Demo Mode.", "info");
+    } catch (err) {
+      console.error("Gagal menghapus konfigurasi di server:", err);
+      addToast("Konfigurasi lokal dibersihkan. Gagal menghapus dari server.", "info");
+    }
+
     setSbConfig({ url: "", anonKey: "" });
     setIsDemo(true);
     setSupabase(null);
-    addToast("Konfigurasi dibersihkan. Kembali ke Demo Mode.", "info");
   };
 
   // ==========================================
