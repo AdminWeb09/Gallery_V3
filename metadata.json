@@ -1,0 +1,6 @@
+{
+  "name": "Modern Web Gallery",
+  "description": "A stunning, dark-themed responsive photo gallery with Supabase database and storage integration, including a professional admin dashboard panel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

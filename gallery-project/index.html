@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Canvas | Galeri Foto Modern</title>
+    <!-- Import stylesheet utama -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigasi Atas -->
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo-link">
+                <div class="logo-dot"></div>
+                <h1 class="brand-name">Ethereal<span>Canvas</span></h1>
+            </a>
+            <div class="nav-links">
+                <a href="admin.html" class="btn-admin">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert"><path d="M20 13c0 5-3.5 7.5-7.66 9.7a1 1 0 0 1-.68 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+                    Dashboard Admin
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Konten Hero / Judul Halaman -->
+    <section class="hero">
+        <h1>Capturing <span>Moments</span>, Preserving Light</h1>
+        <p>Kumpulan karya seni fotografi kurasi eksklusif yang menangkap emosi, keindahan bentuk geometris arsitektur, lanskap alam liar, dan kekuatan ruang negatif dalam harmoni gelap.</p>
+    </section>
+
+    <!-- Filter Kategori Dinamis -->
+    <div id="filters-container" class="filters-container">
+        <!-- Filter buttons akan ditarik dinamis oleh script gallery.js -->
+    </div>
+
+    <!-- Area Utama Galeri Grid -->
+    <main class="gallery-section">
+        <!-- Loader Sementera Fatching Data -->
+        <div id="loader-container" class="loader-container">
+            <div class="spinner"></div>
+            <p style="color: var(--fg-secondary); font-size: 0.9rem; letter-spacing: 0.05em;">Memuat karya seni...</p>
+        </div>
+
+        <!-- Grid layout Masonry -->
+        <div id="gallery-grid" class="gallery-grid">
+            <!-- Item foto dimasukkan dinamis menggunakan gallery.js -->
+        </div>
+    </main>
+
+    <!-- Lightbox Modal untuk Preview Foto Kece Full Screen -->
+    <div id="lightbox" class="lightbox">
+        <button id="lightbox-close" class="lightbox-close" aria-label="Tutup modal">✕</button>
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="">
+        </div>
+        <div class="lightbox-info">
+            <span id="lightbox-category" class="img-category">Kategori</span>
+            <h2 id="lightbox-title" style="margin-bottom: 0.5rem; font-size: 1.75rem;">Judul Foto</h2>
+            <p id="lightbox-desc" style="color: var(--fg-secondary); font-size: 0.95rem; font-weight: 300;">Deskripsi foto lengkap...</p>
+        </div>
+    </div>
+
+    <!-- Kontainer Peringatan Toast Sukses / Error -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ==============================================
+         IMPORT LIBRARY SUPABASE JS DAN LOGIC GALERI 
+         ============================================== -->
+    <!-- Supabase JS CDN: Diposisikan sebelum script gallery.js utama -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Script interaksi DOM dan Database Galeri -->
+    <script src="gallery.js"></script>
+</body>
+</html>

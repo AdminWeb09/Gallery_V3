@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Dashboard | Admin Control Center</title>
+    <!-- CSS Utama -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. PANEL LOGIN (Akan tertutup dinamis jika sudah masuk sesi login) -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-dot" style="margin: 0 auto 1rem auto; float: none;"></div>
+                <h2>Dashboard Admin</h2>
+                <p>Verifikasi kredensial Anda untuk masuk ke sistem kontrol</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email-input">Alamat Email</label>
+                    <input type="email" id="email-input" placeholder="admin@gallery.com" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password-input">Kata Sandi</label>
+                    <input type="password" id="password-input" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Sign In ke Dashboard
+                </button>
+            </form>
+            <div style="margin-top: 1.5rem; text-align: center; color: var(--fg-muted); font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
+                <p>Belum setup Supabase? Masukkan email <b>admin@gallery.com</b> dan sandi <b>password123</b> untuk membuka Demo Mode gratis.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. LAYOUT SPLIT UTAMA (DASHBOARD NYALA SAAT AUTH SEDANG BERLANGSUNG) -->
+    <div class="admin-wrapper">
+        
+        <!-- Sidebar Kiri - Navigasi Portal -->
+        <aside id="sidebar" class="sidebar" style="display: none;">
+            <div class="sidebar-logo">
+                <a href="index.html" class="logo-link">
+                    <div class="logo-dot"></div>
+                    <span class="brand-name" style="font-size: 1.1rem;">Ethereal<span>Console</span></span>
+                </a>
+            </div>
+
+            <!-- Menu Tab Navigation -->
+            <nav class="sidebar-menu">
+                <button id="tab-upload-btn" class="sidebar-item active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                    Unggah Karya Baru
+                </button>
+                <button id="tab-manage-btn" class="sidebar-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="21" y2="9"/></svg>
+                    Kelola Koleksi Foto
+                </button>
+                <a href="index.html" class="sidebar-item" style="margin-top: auto; color: var(--accent);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.25rem;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Buka Halaman Publik
+                </a>
+            </nav>
+
+            <div class="sidebar-user">
+                <div>
+                    <span style="font-size:0.75rem; text-transform:uppercase; color: var(--fg-muted); font-weight:600; letter-spacing:0.05em;">Pengguna Aktif</span>
+                    <div id="user-email-display" class="user-email">emailadmin@domain.com</div>
+                </div>
+                <button id="btn-logout" class="btn-logout">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                    Logout Sesi
+                </button>
+            </div>
+        </aside>
+
+        <!-- Container Sebelah Kanan (Main Panel Konten Dashboard) -->
+        <main class="main-content">
+            
+            <!-- PANEL 1: UNGHAH FOTO BARU -->
+            <section id="panel-upload" class="tab-panel active">
+                <div class="page-header">
+                    <h2>Unggah Karya Foto</h2>
+                    <p>Masukkan foto berkualitas tinggi ke dalam Supabase Storage dan isi metadata portofolio Anda.</p>
+                </div>
+
+                <div class="upload-card">
+                    <form id="upload-form">
+                        <!-- Drag & Drop Zone -->
+                        <div id="dropzone" class="dropzone">
+                            <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><polyline points="16 9 22 9 22 3"/><path d="M22 3 13.5 11.5"/><path d="m16 13-3.04-3.04a2 2 0 0 0-2.83 0L3 17"/></svg>
+                            <div>
+                                <p style="font-weight: 500; margin-bottom: 0.25rem;">Tarik & lepaskan file gambar di sini</p>
+                                <p style="font-size: 0.85rem; color: var(--fg-secondary);">atau klik untuk menelusuri file dari perangkat Anda</p>
+                            </div>
+                            <span>Mendukung: JPEG, PNG, WEBP (Maksimal 5MB)</span>
+                            <input type="file" id="file-input" style="display: none;" accept="image/*">
+                        </div>
+
+                        <!-- Preview File Hasil Drop/Pilih -->
+                        <div id="preview-container" class="upload-preview-container">
+                            <div class="upload-preview-left">
+                                <img id="preview-img" class="upload-preview-img" src="" alt="preview">
+                                <div class="upload-preview-info">
+                                    <span id="preview-name" class="upload-preview-name">nama-file.jpg</span>
+                                    <span id="preview-size" class="upload-preview-size">0.0 MB</span>
+                                </div>
+                            </div>
+                            <button type="button" id="btn-remove-preview" class="btn-remove-preview" title="Hapus berkas terpilih">✕</button>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="photo-title">Judul Karya Foto</label>
+                                <input type="text" id="photo-title" placeholder="Contoh: Geometri Senja" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="photo-category">Kategori Portofolio</label>
+                                <select id="photo-category">
+                                    <option value="Architecture">Architecture</option>
+                                    <option value="Nature">Nature</option>
+                                    <option value="Minimalist">Minimalist</option>
+                                    <option value="People">People</option>
+                                    <option value="General">General / Lainnya</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="photo-desc">Deskripsi Karya (Naratif, Latar Belakang, atau Rahasia Kamera)</label>
+                            <textarea id="photo-desc" placeholder="Tuliskan cerita di balik foto ini, setelan exposure, lensa yang digunakan, atau impresi artistik..."></textarea>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                            <button type="submit" id="btn-upload-submit" class="btn-primary">
+                                Selesaikan Unggah Foto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- PANEL 2: KELOLA LIST FOTO (EDIT / HAPUS) -->
+            <section id="panel-manage" class="tab-panel">
+                <div class="page-header">
+                    <h2>Kelola Koleksi Foto</h2>
+                    <p>Daftar seluruh karya foto yang aktif dipublikasikan. Anda dapat mengedit judul, deskripsi, atau menghapusnya secara permanen.</p>
+                </div>
+
+                <!-- Loader Sementera Fatching Data Dashboard -->
+                <div id="manage-loader" class="loader-container" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Menyelaraskan data...</p>
+                </div>
+
+                <!-- Grid Item Controller -->
+                <div id="manage-grid" class="photo-dashboard-grid">
+                    <!-- Cards will be populated dynamically -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 3. DIALOG MODAL EDIT METADATA FOTO (Muncul Saat tombol edit di-klik) -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Modifikasi Informasi Portofolio</h3>
+                <button type="button" id="close-edit-btn" class="modal-close" aria-label="Tutup modal">✕</button>
+            </div>
+            <form id="edit-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="edit-title">Judul Karya Foto</label>
+                        <input type="text" id="edit-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-category">Kategori Portofolio</label>
+                        <select id="edit-category">
+                            <option value="Architecture">Architecture</option>
+                            <option value="Nature">Nature</option>
+                            <option value="Minimalist">Minimalist</option>
+                            <option value="People">People</option>
+                            <option value="General">General / Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-desc">Deskripsi Karya</label>
+                        <textarea id="edit-desc"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel-edit-btn" class="btn-secondary">Batalkan</button>
+                    <button type="submit" id="btn-save-edit" class="btn-primary">Simpan Seluruh Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Warning alerts -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Supabase JS Library CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Code Kontrol Logika Admin -->
+    <script src="admin.js"></script>
+</body>
+</html>
